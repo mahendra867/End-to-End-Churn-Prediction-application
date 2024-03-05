@@ -18,3 +18,21 @@ class DataValidationConfig:
     STATUS_FILE: str
     unzip_data_dir: Path
     all_schema: dict # here all_Schema just read all the data and install inside the all_schema varaible as a dictionary formate
+
+
+@dataclass(frozen=True)
+class DataTransformationConfig:
+    root_dir: Path  # these are variables which are present inside the config.yaml file data_transformation code part and here iam mentioning inside the entity of the class
+    data_path: Path
+    preprocessor_file: str
+
+
+@dataclass(frozen=True)
+class ModelTrainerConfig:
+    root_dir: Path
+    train_data_path: Path
+    test_data_path: Path
+    model_name: str
+    #alpha: float   # here i have added some more variables like alpha, l1_ratio which these both we define inside the param.yaml file
+    #l1_ratio: float
+    target_column: str  # this target column is present inside the Schema.yaml file which it tells us the quality of the Wine based on the value it returns

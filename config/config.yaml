@@ -15,3 +15,16 @@ data_validation:  # here iam defining the data_ingestion related configuration
   STATUS_FILE: artifacts/data_validation/status.txt # here iam keeping the file inside the data_validation , because whenever it do validation of the data if the data found as correct then our validation status of file return TRUE else or if data is not in correct format then  it will return validation_status as  False , if data is not in correct format it will not start the tarining pipeline because it need computation cost , so before training the we do validate our data which it returns the status of the dataset
 
 
+# so this is my data_transformation related configuration and this will creating 1 folder inside the artifacts which is related to data_transformation
+data_transformation:
+  root_dir: artifacts/data_transformation
+  data_path: artifacts\data_ingestion\BankChurners.csv # and this is the path of the dataset , because whenever iam reading the dataset inside the data_transformation i will need this path at that time
+  preprocessor_file: preprocessor.joblib
+
+
+# here iam prepraing my model trainer configuration 
+model_trainer:
+  root_dir: artifacts/model_trainer  # here actually iam creating folder inside the model_trainer folder 
+  train_data_path: artifacts\data_transformation\train.csv  # our model is taking the train and test path which are present inside the data_transformation
+  test_data_path: artifacts\data_transformation\test.csv 
+  model_name: model.joblib  # once the model got trained by the above train path our model will get saved inside the artifacts->model_trainer folder and we are saving our model in the formate of joblib rather than pickel formate because joblib is better than pickle formate

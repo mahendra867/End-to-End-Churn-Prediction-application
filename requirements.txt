@@ -2,7 +2,6 @@ pandas
 mlflow
 notebook
 numpy
-scikit-learn
 matplotlib
 python-box==6.0.2
 pyYAML
@@ -12,4 +11,6 @@ joblib
 types-pyYAML
 Flask
 Flask-Cors
+seaborn
+imbalanced-learn
 -e .  # it do look for the setup.py local package
