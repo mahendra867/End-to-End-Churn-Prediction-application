@@ -23,10 +23,11 @@ class DataTransformationTrainingPipeline:
                 data_transformation_config = config.get_data_transformation_config() # and here iam getting my get_data_transformation_config()
                 data_transformation = DataTransformation(config=data_transformation_config) # here iam passing my data_transformation_config it means iam calling this data_transformation_config
                 data_transformation.rename_columns()
-                data_transformation.data_transform() 
+                #data_transformation.data_transform() 
+                data_transformation.feature_selection()
                 data_transformation.create_preprocessing_pipeline()
                 data_transformation.correlation()
-                data_transformation.feature_selection()
+                
                 data_transformation.train_test_spliting()
 
             else: # else if i status.txt file status shows as false iam rasing the exception

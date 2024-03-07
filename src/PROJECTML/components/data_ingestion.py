@@ -5,7 +5,7 @@ import zipfile # here iam using the Zipfile to transform the data
 from PROJECTML import logger # here logger is used to logger the data 
 from PROJECTML.utils.common import get_size # here i used the getsize is used to get to know the file size
 from PROJECTML.entity.config_entity import DataIngestionConfig 
-
+from pathlib import Path
 
 # Now iam going to define one class which is DataIngestion from that class which it will take the DataIngestionConfig because from this dataingestionConfig only it will get to know the path 
 class DataIngestion:

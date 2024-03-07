@@ -5,89 +5,116 @@ import pandas as pd
 from sklearn.preprocessing import OrdinalEncoder
 import numpy as np
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline,make_pipeline
+from sklearn.preprocessing import LabelEncoder
 import joblib
 import seaborn as sns
 import matplotlib.pyplot as plt
 from PROJECTML.entity.config_entity import DataTransformationConfig
+from sklearn.compose import make_column_transformer
 
 
-
-# here i defined the component of DataTransformationConfig below
 class DataTransformation:
     def __init__(self, config: DataTransformationConfig):
         self.config = config
+        
 
     def rename_columns(self):
         self.data=self.config.data_path
         self.data = pd.read_csv(self.config.data_path)
-        old_names = self.data.columns
-        new_names = ['Clientnum', 'Attrition', 'Age', 'Gender', 'Dependent_count', 'Education', 'Marital_Status', 'Income', 
-             'Card_Category', 'Months_on_book', 'Total_Relationship_Count', 'Months_Inactive', 'Contacts_Count', 
-             'Credit_Limit', 'Total_Revolving_Bal','Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
-             'Total_Trans_Ct', 'Total_Ct_Chng_Q4_Q1', 'Avg_Utilization_Ratio']
-        self.data.rename(columns=dict(zip(old_names, new_names)), inplace=True)
+        new_names = ['Clientnum', 'Attrition', 'Age', 'Gender', 'Dependent_count', 'Education', 'Marital_Status', 'Income',
+                     'Card_Category', 'Months_on_book', 'Total_Relationship_Count', 'Months_Inactive', 'Contacts_Count',
+                     'Credit_Limit', 'Total_Revolving_Bal', 'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
+                     'Total_Trans_Ct', 'Total_Ct_Chng_Q4_Q1', 'Avg_Utilization_Ratio']
+        self.data.columns = new_names
+        self.data.info()
+        logger.info("done with checking the self.data.info")
+        #return self.data
 
-        logger.info("done with renaming the columns ")
+    def feature_selection(self):
+        columns_to_drop = ['Clientnum', 'Avg_Open_To_Buy']
+        self.data.drop(columns=columns_to_drop, inplace=True)
 
-    
+        print(self.data.columns)
+        self.data.head()
 
-    def data_transform(self):
-        
-        
-        print("DataFrame columns:", self.data.columns)
-        categorical_columns = ['Attrition','Gender','Education','Marital_Status','Income','Card_Category']
-            
-            # Select only categorical columns
-        categorical_data = self.data[categorical_columns]
-            
-            # Initialize OrdinalEncoder
-        ordinal_encoder = OrdinalEncoder()
-            
-            # Fit and transform categorical columns
-        categorical_data_encoded = ordinal_encoder.fit_transform(categorical_data)
-            
-            # Replace categorical columns in the original DataFrame with encoded values
-        self.data[categorical_columns] = categorical_data_encoded
-        print(self.data.head(5))
-
-        
-        return self.data
-      
-
+        y=self.data.isnull().sum()
+        print(y)
+        self.data.info()
 
     def create_preprocessing_pipeline(self):
-        # Define ordinal encoding transformer for categorical features
-        ordinal_encoder = OrdinalEncoder()
 
-        # Define the ColumnTransformer to apply ordinal encoding only to categorical features
-        #categorical_features = ['Gender', 'Education', 'Marital_Status', 'Income', 'Card_Category']
-        preprocessor = ColumnTransformer(
-            transformers=[
-                ('ordinal_encoder', ordinal_encoder, [4,6,7,8,9])
-            ],
-            remainder='passthrough'  # Passthrough numerical features
+        self.data1=self.data.copy()
+        self.data1.drop(columns='Attrition', inplace=True)
+        
+        print(f"this is self.data1 information {self.data1.info()}")
+        # Assuming 'data' is your DataFrame
+        categorical_columns = ['Gender', 'Education', 'Marital_Status', 'Income', 'Card_Category']
+        numerical_columns = self.data1.select_dtypes(include=[np.number]).columns.tolist()
+
+        # Apply label encoding to the target column
+
+
+        #X = data.drop('Attrition', axis=1)
+
+
+
+        # Create the column transformer
+        preprocessor = make_column_transformer(
+            (OrdinalEncoder(), categorical_columns),
+            remainder='passthrough'  # Numerical columns are passed through
         )
 
-        #trf1 = ColumnTransformer(
-        #[('ordinal_encode', OrdinalEncoder(), [1, 2, 6, 8])],  # Indices of categorical columns
-            #remainder='passthrough'
-        #)
+        #print(self.data.info())
 
-        # Define the full preprocessing pipeline including the ColumnTransformer
-        preprocessing_pipeline = Pipeline(
-            steps=[
-                ('preprocessor', preprocessor)
-            ]
-        )
-        logger.info("done creating the preprocessor.joblib")
-        #joblib.dump(preprocessing_pipeline)
-        joblib.dump(preprocessing_pipeline, os.path.join(self.config.root_dir, self.config.preprocessor_file))
+        # Apply the transformations to the features
+        X_transformed = preprocessor.fit_transform(self.data1)
+
+        # Save the preprocessor object for later use on unseen data
+        joblib.dump(preprocessor, os.path.join(self.config.root_dir, self.config.preprocessor_file))
+
+        # Now, 'X_transformed' is your preprocessed feature matrix
+
+        # Apply the transformations to the features
+        #X_transformed = preprocessor.fit_transform(data)
+
+        le = LabelEncoder()
+        self.data['Attrition'] = le.fit_transform(self.data['Attrition'])
+
+        # Convert the transformed data back into a DataFrame
+        X_transformed_df = pd.DataFrame(X_transformed, columns=categorical_columns+numerical_columns)
+
+        # Convert numerical columns back to their original data types
+        for col in numerical_columns:
+            X_transformed_df[col] = X_transformed_df[col].astype(self.data[col].dtype)
+
+        self.data[categorical_columns+numerical_columns] = X_transformed_df
+
+
+        # Replace the original columns in 'data' with the transformed columns
+        self.data[categorical_columns+numerical_columns] = X_transformed_df
+
+        print(f"this is the new transformed dataset which is self.data {self.data.info()}")
+        print(f"this is the shape of the self.data {self.data.shape}")
+        print(f"this is the head of the self.data {self.data.head()}")
+
+        # Now, 'data' is your preprocessed DataFrame
+
+
+
+
+
+
+        
+
+   
+
+
 
     def correlation(self):
         
         # Find most important features relative to target Price
-        print("Find most important features relative to Attrition-target by Correlation matrix ")
+        print("Find most important features relative to Attrition-target")
         #numeric_columns = self.data.select_dtypes(include=[np.number])
         corr = self.data.corr()
         corr.sort_values(["Attrition"], ascending = False, inplace = True)
@@ -103,17 +130,15 @@ class DataTransformation:
         plt.title("Heatmap of all the Features of Train data set", fontsize = 25);
 
 
-       
-                
-    def feature_selection(self):
-        features = ['Age', 'Gender', 'Dependent_count', 'Education','Marital_Status', 'Income', 'Card_Category','Months_on_book',
-            'Total_Relationship_Count','Months_Inactive','Contacts_Count', 'Credit_Limit', 'Total_Revolving_Bal','Total_Amt_Chng_Q4_Q1', 
-            'Total_Trans_Amt','Total_Trans_Ct','Total_Ct_Chng_Q4_Q1','Avg_Utilization_Ratio','Attrition']
-        self.data = pd.DataFrame(self.data, columns = features)
-        logger.info("removed columns with very low correlation: Avg_Open_To_Buy")
-        print(self.data.columns)
         logger.info("Done with feature selection")
 
+
+    
+      
+
+        
+        
+    
 
     
     ## Note: You can add different data transformation techniques such as Scaler, PCA and all
@@ -126,9 +151,8 @@ class DataTransformation:
         #data = pd.read_csv(self.config.data_path) # this line helps us to read the data
         transformed_dataset=self.data
         transformed_dataset.to_csv(os.path.join(self.config.root_dir, "transformed_dataset.csv"),index=False)
-
         # Split the data into training and test sets. (0.75, 0.25) split.
-        #train, test = train_test_split(self.data,test_size=0.33,random_state=25) # this line splits the data into train_test_split
+        #train, test = train_test_split(transformed_dataset,test_size=0.33,random_state=25) # this line splits the data into train_test_split
 
         #train.to_csv(os.path.join(self.config.root_dir, "train.csv"),index = False) # here it saves the train and test data in csv format inisde the artifacts-> transformation folder
         #test.to_csv(os.path.join(self.config.root_dir, "test.csv"),index = False)
@@ -139,4 +163,4 @@ class DataTransformation:
 
         #print(train.shape)
         #print(test.shape)
-        logger.info("Done with creating the transformed_data.csv file in the artifacts folder")
+        logger.info("Done with data creating the transformed_dataset in the artifacts folder")
