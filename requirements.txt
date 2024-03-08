@@ -13,4 +13,6 @@ Flask
 Flask-Cors
 seaborn
 imbalanced-learn
+gunicorn
+dvc
 -e .  # it do look for the setup.py local package

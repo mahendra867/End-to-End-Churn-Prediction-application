@@ -1,6 +1,6 @@
-FROM python:3.8
+FROM python:3.9
 
-RUN apt update -y && apt install awscli -y
+#RUN apt update -y && apt install awscli -y
 
 COPY . /app
 

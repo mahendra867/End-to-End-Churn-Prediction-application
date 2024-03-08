@@ -1,0 +1,86 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src\PROJECTML\pipeline\stage_01_data_ingestion.py
+    deps:
+    - path: config\config.yaml
+      hash: md5
+      md5: 94c52823c191dc1171ab1bf1734a8a33
+      size: 3056
+    - path: src\PROJECTML\pipeline\stage_01_data_ingestion.py
+      hash: md5
+      md5: 9f76cc75f9d0aadf505ea5ccad3189eb
+      size: 1672
+    outs:
+    - path: artifacts\data_ingestion\BankChurners.csv
+      hash: md5
+      md5: 2e4201fffc856b7f2d0daf31aa79d83a
+      size: 1210878
+  data_validation:
+    cmd: python src\PROJECTML\pipeline\stage_02_data_validation.py
+    deps:
+    - path: artifacts\data_ingestion\BankChurners.csv
+      hash: md5
+      md5: 2e4201fffc856b7f2d0daf31aa79d83a
+      size: 1210878
+    - path: config\config.yaml
+      hash: md5
+      md5: 94c52823c191dc1171ab1bf1734a8a33
+      size: 3056
+    - path: schema.yaml
+      hash: md5
+      md5: 2ab1378006978f8ee74b7e99fb9891a2
+      size: 580
+    - path: src\PROJECTML\pipeline\stage_02_data_validation.py
+      hash: md5
+      md5: aa17039553315b7beb022e4257fbe7b7
+      size: 1428
+    outs:
+    - path: artifacts\data_validation\status.txt
+      hash: md5
+      md5: 86e6a2f694c57a675b3e2da6b95ff9ba
+      size: 23
+  data_transformation:
+    cmd: python src\PROJECTML\pipeline\stage_03_data_transformation.py
+    deps:
+    - path: artifacts\data_ingestion\BankChurners.csv
+      hash: md5
+      md5: 2e4201fffc856b7f2d0daf31aa79d83a
+      size: 1210878
+    - path: config/config.yaml
+      hash: md5
+      md5: 94c52823c191dc1171ab1bf1734a8a33
+      size: 3056
+    - path: src\PROJECTML\pipeline\stage_03_data_transformation.py
+      hash: md5
+      md5: d305f71378cae03347cd823ccb3f2ee0
+      size: 2098
+    outs:
+    - path: artifacts\data_transformation\preprocessor.joblib
+      hash: md5
+      md5: 74116e85e6de993a00b4932a1b2a107f
+      size: 4389
+    - path: artifacts\data_transformation\transformed_dataset.csv
+      hash: md5
+      md5: 7d1a7ea41a4b276224fbdd5c37b784da
+      size: 745521
+  model_trainer:
+    cmd: python src\PROJECTML\pipeline\stage_04_model_trainer.py
+    deps:
+    - path: artifacts\data_transformation\transformed_dataset.csv
+      hash: md5
+      md5: 7d1a7ea41a4b276224fbdd5c37b784da
+      size: 745521
+    - path: config\config.yaml
+      hash: md5
+      md5: 94c52823c191dc1171ab1bf1734a8a33
+      size: 3056
+    - path: src\PROJECTML\pipeline\stage_04_model_trainer.py
+      hash: md5
+      md5: 3fe9070df11ef8a2d1e2a980f49fabc3
+      size: 2402
+    outs:
+    - path: artifacts\model_trainer\model.joblib
+      hash: md5
+      md5: 8ffac226d875e3b487fcefbb9b70a649
+      size: 30409593
