@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - churnapp1instancename
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Log in to registry
+      uses: docker/login-action@v2
+      with:
+        registry: https://churnrepositoryimagename.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_2029966a59d04825a28eeb1fd9afb94b }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_2808a05962cb42df8a3573acd9502dda }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: churnrepositoryimagename.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_2029966a59d04825a28eeb1fd9afb94b }}/churn_app1:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'churnapp1instancename'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_57fff2c50d4c4776bf0164ae98f871df }}
+        images: 'churnrepositoryimagename.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_2029966a59d04825a28eeb1fd9afb94b }}/churn_app1:${{ github.sha }}'
