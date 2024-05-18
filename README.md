@@ -118,7 +118,7 @@ By following this workflow, I effectively addressed the problem statement of pre
 Clone the repository
 
 ```bash
-https://github.com/mahendra867/random_datasets/raw/main/winequality-data.zip
+https://github.com/mahendra867/End-to-End-Churn-Prediction-application.git
 ```
 ### STEP 01- Create a conda environment after opening the repository
 
