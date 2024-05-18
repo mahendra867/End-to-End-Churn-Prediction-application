@@ -1,6 +1,6 @@
 # End to End Churn Prediction application with MLops
 
-Working of Application
+Working of an Application
 
 link: https://www.linkedin.com/posts/mahendra-o_datascience-mlops-continuouslearning-activity-7172234126597578752-RiFG?utm_source=share&utm_medium=member_desktop
 
