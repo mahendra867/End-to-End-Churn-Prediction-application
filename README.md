@@ -1,7 +1,9 @@
 # End to End Churn Prediction application with MLops
 
 #### Working of an Application
-https://github.com/mahendra867/End-to-End-Churn-Prediction-application/assets/95703197/a73aac65-d14e-4751-8355-40c77805cc5f
+https://github.com/mahendra867/End-to-End-Churn-Prediction-application/assets/95703197/a2e82f77-186b-43a8-b595-b42fcba391c6
+
+
 
 
 
