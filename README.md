@@ -1,10 +1,12 @@
 # End to End Churn Prediction application with MLops
 
-Working of an Application
-https://github.com/mahendra867/End-to-End-Churn-Prediction-application/issues/1#issue-2394003821
+#### Working of an Application
+https://github.com/mahendra867/End-to-End-Churn-Prediction-application/assets/95703197/a73aac65-d14e-4751-8355-40c77805cc5f
 
 
-link: https://www.linkedin.com/posts/mahendra-o_datascience-mlops-continuouslearning-activity-7172234126597578752-RiFG?utm_source=share&utm_medium=member_desktop
+
+
+
 
 ## Problem Statement
 Description:
